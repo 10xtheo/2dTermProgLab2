@@ -9,6 +9,19 @@ struct List
   List *tail;
 };
 
+int getNumber ()
+{
+  int a;
+  cin >> a;
+  while (cin.fail())
+  {
+    cin.clear();
+    cin.ignore();
+    cin >> a;
+  }
+  return a;
+}
+
 List *createList(int length)
 {
   List *curr = nullptr;
@@ -103,17 +116,6 @@ void insertElementToSomePositionOfTheList(List *element, int index, int input)
   getElementOfListByIndex(element, index)->data = input;
 }
 
-void fillListUserly(List *element)
-{
-  int number;
-  cin >> number;
-  element->data = number;
-  while (cin >> number && number != -1)
-  {
-    insertElementToEndOfTheList(element, number);
-  }
-}
-
 List *deleteElementOfTheList(List *element, int index)
 {
   List *removingElement = getElementOfListByIndex(element, index);
@@ -135,6 +137,19 @@ List *deleteElementOfTheList(List *element, int index)
   }
   delete removingElement;
   return element;
+}
+
+void fillListUserly(List *element)
+{
+  int number;
+  number = getNumber();
+  element->data = number;
+  while (number != -1)
+  {
+    number = getNumber();
+    insertElementToEndOfTheList(element, number);
+  }
+  deleteElementOfTheList(element, lenOfList(element)-1);
 }
 
 void changeElementsOfTheList(List *element, int index1, int index2)
@@ -193,10 +208,11 @@ void insertElementToEndOfTheDynamicArray(int *array, int *length, int input)
 void fillDynamicArrayUserly(int *array, int *length)
 {
   int number;
-  cin >> number;
+  number = getNumber();
   *array = number;
-  while (cin >> number && number != -1)
+  while (number != -1)
   {
+    number = getNumber();
     insertElementToEndOfTheDynamicArray(array, length, number);
   }
 }
@@ -234,6 +250,15 @@ void deleteElementOfDynamicArray(int *&array, int &length, int index)
   array = newArr;
 }
 
+void copyFromListToDynamicArray(List *element, int *array, int *length)
+{
+  *length = lenOfList(element);
+  for (int i = 0; i < *length; ++i)
+  {
+    array[i] = getElementOfListByIndex(element, i)->data;
+  }
+}
+
 int main()
 {
   bool finish = 1;
@@ -251,22 +276,24 @@ int main()
     cout << "3. Удалить из списка" << endl;
     cout << "4. Обмен элементов списка" << endl;
     cout << "5. Получение элемента списка" << endl;
+    cout << "6. Вывод списка и дин массива" << endl;
+    cout << "9. Идз №9, чет -= число, нечет *= ранд(1,5)" << endl;
     int choice;
-    cin >> choice;
+    choice = getNumber();
     switch (choice)
     {
       case 1: // заполнение
       {
         cout << "1. Заполнить список случайно" << endl;
         cout << "2. Ввести свои числа" << endl;
-        cin >> choice1;
+        choice1 = getNumber();
         switch (choice1)
         {
           case 1: // рандомно
           {
             cout << "Введите длину списка: ";
             int length;
-            cin >> length;
+            length = getNumber();
             list = createList(length);
             auto start = chrono::high_resolution_clock::now();
             fillListRandomly(list);
@@ -281,6 +308,7 @@ int main()
             end = chrono::high_resolution_clock::now();
             duration = end - start;
             cout << "Время заполнения дин массива:" << (duration.count() * 1000) << "(мс)" << endl;
+            copyFromListToDynamicArray(list, arr, &len);
             break;
           }
           case 2: // пользовательски
@@ -297,8 +325,8 @@ int main()
             fillDynamicArrayUserly(arr, &len);
             end = chrono::high_resolution_clock::now();
             duration = end - start;
-            // printDynamicArray(arr, len);
             cout << "Время заполнения дин массива:" << (duration.count() * 1000) << "(мс)" << endl;
+            copyFromListToDynamicArray(list, arr, &len);
             break;
           }
           default:
@@ -316,7 +344,7 @@ int main()
         {
           cout << "Введите индекс для вставки: ";
           int index;
-          cin >> index;
+          index = getNumber();
           if (!correctIndex(index, lenOfList(list)))
           {
             cout << "Неверный индекс" << endl;
@@ -324,7 +352,7 @@ int main()
           }
           cout << "Введите число для вставки: ";
           int input;
-          cin >> input;
+          input = getNumber();
           auto start = chrono::high_resolution_clock::now();
           insertElementToSomePositionOfTheList(list, index, input);
           auto end = chrono::high_resolution_clock::now();
@@ -352,7 +380,7 @@ int main()
           }
           cout << "Введите индекс элемента для удаления: ";
           int index;
-          cin >> index;
+          index = getNumber();
           if (!correctIndex(index, lenOfList(list)))
           {
             cout << "Неверный индекс" << endl;
@@ -395,13 +423,13 @@ int main()
         {
           cout << "Введите индексы элементов для обмена:";
           int index1, index2;
-          cin >> index1;
+          index1 = getNumber();
           if (!correctIndex(index1, lenOfList(list)))
           {
             cout << "Неверный индекс" << endl;
             break;
           }
-          cin >> index2;
+          index2 = getNumber();
           if (!correctIndex(index2, lenOfList(list)))
           {
             cout << "Неверный индекс" << endl;
@@ -430,7 +458,7 @@ int main()
         {
           cout << "Введите индекс элемента получения:";
           int index;
-          cin >> index;
+          index = getNumber();
           if (!correctIndex(index, lenOfList(list)))
           {
             cout << "Неверный индекс" << endl;
@@ -457,6 +485,41 @@ int main()
         printList(list);
         cout << "Дин массив: ";
         printDynamicArray(arr, len);
+        break;
+      }
+      case 9:
+      {
+        cout << "Число пользователя:";
+        int number;
+        number = getNumber();
+        int randInt = rand() % 5 + 1;
+        cout << "Случайное число:" << randInt << endl;
+        auto start = chrono::high_resolution_clock::now();
+        for (int i = 1; i < lenOfList(list); i += 2)
+        {
+          getElementOfListByIndex(list, i)->data -= number; 
+        }
+        for (int i = 0; i < lenOfList(list); i += 2)
+        {
+          getElementOfListByIndex(list, i)->data *= randInt;
+        }
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<float> duration = end - start;
+        cout << "Время изменения списка:" << (duration.count() * 1000) << "(мс)" << endl;
+        //
+        start = chrono::high_resolution_clock::now();
+        for (int i = 1; i < lenOfList(list); i += 2)
+        {
+          arr[i] -= number; 
+        }
+        for (int i = 0; i < lenOfList(list); i += 2)
+        {
+          arr[i] *= randInt;
+        }
+        end = chrono::high_resolution_clock::now();
+        duration = end - start;
+        //
+        cout << "Время изменения дин массива:" << (duration.count() * 1000) << "(мс)" << endl;
         break;
       }
       default:
